@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Upload CSV File Example</title>
+
+    <!--Bootstrap 4-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-10 mx-auto">
+                <h1>File Upload Status</h1>
+
+                <table class="table table-striped" th:if="${status}">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">TIMESTAMP</th>
+                        <th scope="col">PROJECT</th>
+                        <th scope="col">ENTITY</th>
+                        <th scope="col">JOB NAME</th>
+                        <th scope="col">COMPONENT</th>
+                        <th scope="col">TYPE</th>
+                        <th scope="col">ERROR CODE</th>
+                        <th scope="col">ERROR MESSAGE</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="emp, i : ${messages_logs}">
+                        <th scope="row" th:text="${i.index + 1}"></th>
+                        <td th:text="${emp.id}"></td>
+                        <td th:text="${emp.timestamp}"></td>
+                        <td th:text="${emp.project}"></td>
+                        <td th:text="${emp.entity}"></td>
+                        <td th:text="${emp.jobName}"></td>
+                        <td th:text="${emp.component}"></td>
+                        <td th:text="${emp.type}"></td>
+                        <td th:text="${emp.error_code}"></td>
+                        <td th:text="${emp.error_message}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
