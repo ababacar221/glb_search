@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Execution Flow Error",
+  "description": "Execution Flow Error Log definition",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "The unique identifier for a Execution Flow Error",
+      "type": "integer"
+    },
+    "timestamp": {
+      "description": "Timestamp of the Execution Flow Error",
+      "type": "string"
+    },
+    "project": {
+      "description": "Project of the Execution Flow Error",
+      "type": "string"
+    },
+    "entity": {
+      "description": "Entity of the Execution Flow Error",
+      "type": "string"
+    },
+    "jobName": {
+      "description": "JobName of the Execution Flow Error",
+      "type": "string"
+    },
+    "component": {
+      "description": "Component of the Execution Flow Error",
+      "type": "string"
+    },
+    "type": {
+      "description": "Type of the Execution Flow Error",
+      "type": "string"
+    },
+    "error_code": {
+      "description": "Error Code of the Execution Flow Error",
+      "type": "string"
+    },
+    "error_message": {
+      "description": "Error Message of the Execution Flow Error",
+      "type": "string"
+    }
+  },
+  "required": ["id", "timestamp", "project","entity","jobName","type","error_code","error_message"]
+}

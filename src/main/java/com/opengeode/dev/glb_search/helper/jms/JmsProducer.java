@@ -21,5 +21,15 @@ public class JmsHelper {
         log.info("<ExecutionFlows> ::: "+executionFlow);
     }
 
+    public void sendTo(String destination, ExecutionFlow executionFlow){
+        jmsTemplate.convertAndSend(destination,executionFlow);
+        log.info("<ExecutionFlows> ::: "+executionFlow);
+    }
+
+    public void sendTo(String destination, Object o){
+        jmsTemplate.convertAndSend(destination,o);
+        log.info("<Object> ::: "+o);
+    }
+
 
 }
