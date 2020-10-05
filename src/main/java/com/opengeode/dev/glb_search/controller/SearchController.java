@@ -1,5 +1,5 @@
 package com.opengeode.dev.glb_search.controller;
-
+import com.opengeode.dev.glb_search.model.Customer;
 import com.opengeode.dev.glb_search.model.execution_flow.ExecutionFlow;
 import com.opengeode.dev.glb_search.service.ElasticsearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +22,8 @@ public class SearchController {
         return elasticsearchService.ingest_data("Employees50K.json");
     }
 
-    @GetMapping("/{searchString}")
-    public List<ExecutionFlow> get_all_data(@PathVariable String searchString) throws IOException{
-        return elasticsearchService.get_specific_docs(searchString);
+    @GetMapping("/")
+    public List<Customer> get_all_data() throws IOException{
+        return elasticsearchService.get_all_data();
     }
 }

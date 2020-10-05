@@ -13,13 +13,15 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 public class EsConfig {
+
     private static final Logger LOG = LoggerFactory.getLogger(EsConfig.class);
-    //@Value("${}")
-    private static final String EsHost = "localhost";
-    //@Value("${elasticsearch.port}")
-    private static final int EsPort = 9200;
-    //@Value("${elasticsearch.clustername}")
-    private String EsClusterName;
+
+    @Value("${EsHost}")
+    private String EsHost;
+
+    @Value("${EsPort}")
+    private int EsPort;
+
     private RestHighLevelClient restHighLevelClient;
 
     @Bean

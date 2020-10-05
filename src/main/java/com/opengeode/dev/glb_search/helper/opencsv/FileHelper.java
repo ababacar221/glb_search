@@ -1,11 +1,6 @@
 package com.opengeode.dev.glb_search.helper.opencsv;
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -13,7 +8,7 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class CsvHelper {
+public class FileHelper {
 
     public File createDirectoryAndFile(String dir, String fil) throws IOException {
         String fd = String.format("%s/%s",dir,fil);
@@ -79,5 +74,6 @@ public class CsvHelper {
         }
         return fileCollection;
     }
+
 
 }

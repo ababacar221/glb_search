@@ -1,0 +1,31 @@
+{
+  "properties": {
+    "id": {
+      "type": "keyword"
+    },
+    "timestamp": {
+      "type": "date"
+    },
+    "project": {
+      "type": "text"
+    },
+    "entity": {
+      "type": "text"
+    },
+    "jobName": {
+      "type": "text"
+    },
+    "component": {
+      "type": "text"
+    },
+    "type": {
+      "type": "text"
+    },
+    "error_code": {
+      "type": "keyword"
+    },
+    "error_message": {
+      "type": "text"
+    }
+  }
+}

@@ -18,7 +18,6 @@ public class RestfulWebServicesHeaderConfig implements WebMvcConfigurer {
         return localeResolver;
     }
 
-    // Be careful about the name of the method - should be messageSource
     @Bean
     public ResourceBundleMessageSource bundleMessageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();

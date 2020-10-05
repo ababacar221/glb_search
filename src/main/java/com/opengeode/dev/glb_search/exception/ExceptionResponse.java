@@ -10,12 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExceptionResponse {
-    //timestamp
     private Date timestamp;
-    //message
     private String message;
-    //status
-    //private int status;
-    //details
     private String details;
 }
