@@ -24,6 +24,7 @@ public class EsConfig {
 
     private RestHighLevelClient restHighLevelClient;
 
+
     @Bean
     public RestHighLevelClient createInstance() {
         return buildClient();
@@ -32,7 +33,8 @@ public class EsConfig {
     private RestHighLevelClient buildClient() {
         try {
             restHighLevelClient = new RestHighLevelClient(
-                    RestClient.builder(
+                    RestClient
+                            .builder(
                             new HttpHost(EsHost, EsPort, "http"),
                             new HttpHost(EsHost, EsPort+1, "http")));
         } catch (Exception e) {

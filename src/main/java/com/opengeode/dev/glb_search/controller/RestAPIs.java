@@ -1,7 +1,7 @@
 package com.opengeode.dev.glb_search.controller;
 
 import com.opengeode.dev.glb_search.helper.jms.JmsProducer;
-import com.opengeode.dev.glb_search.model.Customer;
+import com.opengeode.dev.glb_search.model.CustomerLog;
 import com.opengeode.dev.glb_search.model.MessageStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/error")
 public class RestAPIs {
     @Autowired
     JmsProducer jmsProducer;
@@ -16,19 +17,19 @@ public class RestAPIs {
     @Autowired
     private MessageStorage customerStorage;
 
-    @PostMapping(value="/api/customer")
-    public Customer postCustomer(@RequestBody Customer customer){
-        jmsProducer.send(customer);
-        return customer;
+    @PostMapping(value="/customer")
+    public CustomerLog postCustomer(@RequestBody CustomerLog customerLog){
+        jmsProducer.send(customerLog);
+        return customerLog;
     }
 
-    @GetMapping(value="/api/customers")
-    public List<Customer> getAll(){
-        List<Customer> customers = customerStorage.getAll();
-        return customers;
+    @GetMapping(value="/customers")
+    public List<CustomerLog> getAll(){
+        List<CustomerLog> customerLogs = customerStorage.getAll();
+        return customerLogs;
     }
 
-    @DeleteMapping(value="/api/customers/clear")
+    @DeleteMapping(value="/customers/clear")
     public String clearCustomerStorage() {
         customerStorage.clear();
         return "Clear All CustomerStorage!";

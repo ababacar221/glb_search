@@ -1,0 +1,46 @@
+{
+  "_routing": {
+    "required": false
+  },
+  "numeric_detection": false,
+  "dynamic_date_formats": [
+    "strict_date_optional_time",
+    "yyyy/MM/dd HH:mm:ss Z||yyyy/MM/dd Z"
+  ],
+  "_source": {
+    "excludes": [],
+    "includes": [],
+    "enabled": true
+  },
+  "dynamic": true,
+  "date_detection": true,
+  "properties": {
+    "error_message": {
+      "type": "text"
+    },
+    "component": {
+      "type": "text"
+    },
+    "job_name": {
+      "type": "text"
+    },
+    "project": {
+      "type": "text"
+    },
+    "error_code": {
+      "type": "text"
+    },
+    "id": {
+      "type": "keyword"
+    },
+    "type": {
+      "type": "text"
+    },
+    "entity": {
+      "type": "text"
+    },
+    "timestamp": {
+      "type": "date"
+    }
+  }
+}

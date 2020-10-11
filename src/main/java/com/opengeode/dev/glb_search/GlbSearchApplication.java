@@ -1,15 +1,10 @@
 package com.opengeode.dev.glb_search;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opengeode.dev.glb_search.helper.jms.JmsConsumer;
-import com.opengeode.dev.glb_search.helper.jms.JmsProducer;
 import com.opengeode.dev.glb_search.helper.opencsv.FileHelper;
 import com.opengeode.dev.glb_search.model.MessageStorage;
-import com.opengeode.dev.glb_search.model.execution_flow.ExecutionFlow;
-import com.opengeode.dev.glb_search.service.CsvService;
-import com.opengeode.dev.glb_search.service.ElasticsearchService;
-import com.opengeode.dev.glb_search.task.LoadDataTask;
+import com.opengeode.dev.glb_search.dao.CsvRepository;
+import com.opengeode.dev.glb_search.dao.ElasticsearchRepository;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +18,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jms.core.JmsTemplate;
 
 import java.io.IOException;
-import java.util.Timer;
 
 @SpringBootApplication
 @Slf4j
@@ -39,10 +33,10 @@ public class GlbSearchApplication extends SpringBootServletInitializer {
     private String directory_data;
 
     @Autowired
-    private CsvService csvService;
+    private CsvRepository csvRepository;
 
     @Autowired
-    private ElasticsearchService elasticsearchService;
+    private ElasticsearchRepository elasticsearchRepository;
 
     @Autowired
     private FileHelper fileHelper;
@@ -66,8 +60,8 @@ public class GlbSearchApplication extends SpringBootServletInitializer {
     @Bean
     public void readSchema() throws IOException {
         log.info("READING SCHEMA ...");
-        elasticsearchService.readJsonSchemaConfig(fileHelper.readerFileConfig(directory_data_config));
-        csvService.readConfig(destination, fileHelper.readerFileConfig(directory_data));
+        elasticsearchRepository.readJsonSchemaConfig(fileHelper.readerFileConfig(directory_data_config));
+        csvRepository.readConfig(destination, fileHelper.readerFileConfig(directory_data));
     }
 
     @Bean
@@ -76,7 +70,7 @@ public class GlbSearchApplication extends SpringBootServletInitializer {
             @SneakyThrows
             public void run() {
                 while (true) {
-                    csvService.readConfig(destination, fileHelper.readerFileConfig(directory_data));
+                    csvRepository.readConfig(destination, fileHelper.readerFileConfig(directory_data));
                 }
             }
         }).start();

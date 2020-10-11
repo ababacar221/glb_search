@@ -6,9 +6,8 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvException;
 import com.opengeode.dev.glb_search.helper.jms.JmsProducer;
-import com.opengeode.dev.glb_search.helper.opencsv.FileHelper;
-import com.opengeode.dev.glb_search.model.Customer;
-import com.opengeode.dev.glb_search.service.CsvService;
+import com.opengeode.dev.glb_search.model.CustomerLog;
+import com.opengeode.dev.glb_search.dao.CsvRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +19,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
-public class CsvServiceImpl implements CsvService {
+public class CsvService implements CsvRepository {
 
     @Autowired
     private JmsProducer jmsProducer;
 
-    private Customer customer;
+    private CustomerLog customerLog;
 
 
     public CsvToBean getCsvToBean(Reader reader, Object o) throws IOException {
@@ -42,23 +41,29 @@ public class CsvServiceImpl implements CsvService {
         try {
             Reader reader = Files.newBufferedReader(f.toPath());
             CSVReader csvReader = new CSVReaderBuilder(reader)
-                    .withSkipLines(1)
+                    //.withSkipLines(1)
                     .build();
             List<String[]> records = csvReader.readAll();
+            ArrayList<String> lineHeader = new ArrayList<>();
+            boolean headersConsumed = false;
             for (String[] record : records) {
-                customer = new Customer();
-                adp.put("ID",record[0]);
-                adp.put("TIMESTAMP",new Date().toString());
-                adp.put("PROJECT",record[2]);
-                adp.put("ENTITY",record[3]);
-                adp.put("JOB_NAME",record[4]);
-                adp.put("COMPONENT",record[5]);
-                adp.put("TYPE",record[6]);
-                adp.put("ERROR_CODE",record[7]);
-                adp.put("ERROR_MESSAGE",record[8]);
+                if(!headersConsumed){
+                    for (int i=0;i<record.length;i++){
+                        log.info("RECORD : "+i +" : "+record[i]);
+                        lineHeader.add(record[i]);
+                    }
+                    log.info("LINE HEADER == "+lineHeader);
+                    headersConsumed = true;
+                    continue;
+                }
+                customerLog = new CustomerLog();
+                for (int i=0;i<record.length;i++){
+                    adp.put(lineHeader.get(i),record[i]);
+                }
+                adp.put("timestamp",new Date());
                 log.info("ADP "+adp);
-                customer.setLog(adp);
-                jmsProducer.send(customer);
+                customerLog.setLog(adp);
+                jmsProducer.send(customerLog);
                 ad.add(adp);
             }
             csvReader.close();
@@ -80,7 +85,6 @@ public class CsvServiceImpl implements CsvService {
                     log.info(String.format("Sorry, unable to delete the file : N°%s %s.",i,f.getName()));
                 }
                 i.getAndIncrement();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
