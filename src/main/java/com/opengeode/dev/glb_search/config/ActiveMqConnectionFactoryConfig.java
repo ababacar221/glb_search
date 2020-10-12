@@ -26,11 +26,8 @@ public class ActiveMqConnectionFactoryConfig {
     @Value("${glb.activemq.borker.password}")
     String password;
 
-    /*
-     * Initial ConnectionFactory
-     */
     @Bean
-    public ConnectionFactory connectionFactory(){
+    public ConnectionFactory connectionFactory() {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
         connectionFactory.setBrokerURL(brokerUrl);
         connectionFactory.setUserName(userName);
@@ -38,7 +35,7 @@ public class ActiveMqConnectionFactoryConfig {
         return connectionFactory;
     }
 
-    @Bean // Serialize message content to json using TextMessage
+    @Bean
     public MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
@@ -46,9 +43,7 @@ public class ActiveMqConnectionFactoryConfig {
         return converter;
     }
 
-    /*
-     * Used for Receiving Message
-     */
+
     @Bean
     public JmsListenerContainerFactory<?> jsaFactory(ConnectionFactory connectionFactory,
                                                      DefaultJmsListenerContainerFactoryConfigurer configurer) {
@@ -58,11 +53,8 @@ public class ActiveMqConnectionFactoryConfig {
         return factory;
     }
 
-    /*
-     * Used for Sending Messages.
-     */
     @Bean
-    public JmsTemplate jmsTemplate(){
+    public JmsTemplate jmsTemplate() {
         JmsTemplate template = new JmsTemplate();
         template.setMessageConverter(jacksonJmsMessageConverter());
         template.setConnectionFactory(connectionFactory());

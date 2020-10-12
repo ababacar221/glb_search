@@ -16,10 +16,10 @@ public class EsConfig {
 
     private static final Logger LOG = LoggerFactory.getLogger(EsConfig.class);
 
-    @Value("${EsHost}")
+    @Value("${elasticsearch.host}")
     private String EsHost;
 
-    @Value("${EsPort}")
+    @Value("${elasticsearch.port}")
     private int EsPort;
 
     private RestHighLevelClient restHighLevelClient;

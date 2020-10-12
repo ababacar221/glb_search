@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerLog {
+public class ErrorLog {
     private String id = UUID.randomUUID().toString();
     private Map<String, Object> log;
 }

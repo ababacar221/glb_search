@@ -6,7 +6,7 @@ import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.exceptions.CsvException;
 import com.opengeode.dev.glb_search.helper.jms.JmsProducer;
-import com.opengeode.dev.glb_search.model.CustomerLog;
+import com.opengeode.dev.glb_search.model.ErrorLog;
 import com.opengeode.dev.glb_search.dao.CsvRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,7 @@ public class CsvService implements CsvRepository {
     @Autowired
     private JmsProducer jmsProducer;
 
-    private CustomerLog customerLog;
-
+    private ErrorLog errorLog;
 
     public CsvToBean getCsvToBean(Reader reader, Object o) throws IOException {
         CsvToBean csvToBean = new CsvToBeanBuilder(reader)
@@ -56,14 +55,14 @@ public class CsvService implements CsvRepository {
                     headersConsumed = true;
                     continue;
                 }
-                customerLog = new CustomerLog();
+                errorLog = new ErrorLog();
                 for (int i=0;i<record.length;i++){
                     adp.put(lineHeader.get(i),record[i]);
                 }
                 adp.put("timestamp",new Date());
                 log.info("ADP "+adp);
-                customerLog.setLog(adp);
-                jmsProducer.send(customerLog);
+                errorLog.setLog(adp);
+                jmsProducer.sendQueue(errorLog);
                 ad.add(adp);
             }
             csvReader.close();

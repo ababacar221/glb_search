@@ -1,7 +1,6 @@
 package com.opengeode.dev.glb_search.helper.jms;
 
-import com.opengeode.dev.glb_search.model.CustomerLog;
-import com.opengeode.dev.glb_search.model.MessageStorage;
+import com.opengeode.dev.glb_search.model.ErrorLog;
 import com.opengeode.dev.glb_search.dao.ElasticsearchRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +18,13 @@ public class JmsConsumer {
     private String index;
 
     @Autowired
-    private MessageStorage customerStorage;
-
-    @Autowired
     private ElasticsearchRepository elasticsearchRepository;
 
     @JmsListener(destination = "${glb.activemq.queue}", containerFactory="jsaFactory")
-    public void receive(CustomerLog customerLog) throws IOException, InterruptedException {
-        System.out.println("Recieved Message: " + customerLog);
-        log.info("Recieved Message: " + customerLog);
-        customerStorage.add(customerLog);
-        elasticsearchRepository.ingest_data(customerLog,index);
+    public void receive(ErrorLog errorLog) throws IOException, InterruptedException {
+        System.out.println("Received Message: " + errorLog);
+        log.info("Received Message: " + errorLog);
+        elasticsearchRepository.ingest_data(errorLog,index);
     }
 
 

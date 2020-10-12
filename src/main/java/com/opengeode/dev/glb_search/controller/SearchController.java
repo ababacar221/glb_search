@@ -1,5 +1,5 @@
 package com.opengeode.dev.glb_search.controller;
-import com.opengeode.dev.glb_search.model.CustomerLog;
+import com.opengeode.dev.glb_search.model.ErrorLog;
 import com.opengeode.dev.glb_search.dao.ElasticsearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,14 +15,8 @@ public class SearchController {
     @Autowired
     private ElasticsearchRepository elasticsearchRepository;
 
-
-    @PostMapping("/ingest")
-    public HttpStatus ingest_data() throws IOException,InterruptedException{
-        return elasticsearchRepository.ingest_data("Employees50K.json");
-    }
-
     @GetMapping("/")
-    public List<CustomerLog> get_all_data() throws IOException{
+    public List<ErrorLog> get_all_data() throws IOException{
         return elasticsearchRepository.get_all_data();
     }
 }

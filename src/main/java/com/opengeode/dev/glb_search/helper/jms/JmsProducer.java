@@ -1,6 +1,6 @@
 package com.opengeode.dev.glb_search.helper.jms;
 
-import com.opengeode.dev.glb_search.model.CustomerLog;
+import com.opengeode.dev.glb_search.model.ErrorLog;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.Message;
 import org.apache.activemq.command.ActiveMQQueue;
@@ -22,14 +22,13 @@ public class JmsProducer {
     @Value("${glb.activemq.queue}")
     String queue;
 
-    public void send(CustomerLog customerLog){
-        jmsTemplate.convertAndSend(queue, customerLog);
+    public void send(ErrorLog errorLog){
+        jmsTemplate.convertAndSend(queue, errorLog);
     }
 
-    public void sendQueue(CustomerLog order) {
+    public void sendQueue(ErrorLog order) {
         log.info("sending with convertAndSend() to " + queue + " <" + order + ">");
         jmsTemplate.convertAndSend(queue, order, m -> {
-
             log.info("setting standard JMS headers before sending");
             m.setJMSCorrelationID(UUID.randomUUID().toString());
             m.setJMSExpiration(1000);
@@ -41,12 +40,10 @@ public class JmsProducer {
             m.setJMSPriority(Message.DEFAULT_PRIORITY);
             m.setJMSTimestamp(System.nanoTime());
             m.setJMSType("type");
-
             log.info("setting custom JMS headers before sending");
             m.setStringProperty("jms-custom-header", "this is a custom jms property");
             m.setBooleanProperty("jms-custom-property", true);
             m.setDoubleProperty("jms-custom-property-price", 0.0);
-
             return m;
         });
 

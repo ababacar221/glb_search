@@ -2,7 +2,7 @@ package com.opengeode.dev.glb_search.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opengeode.dev.glb_search.model.Context;
-import com.opengeode.dev.glb_search.model.CustomerLog;
+import com.opengeode.dev.glb_search.model.ErrorLog;
 import com.opengeode.dev.glb_search.dao.ElasticsearchRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkItemResponse;
@@ -57,21 +57,24 @@ public class ElasticsearchService implements ElasticsearchRepository {
         FileReader fr = new FileReader(jsonFile);
         BufferedReader br = new BufferedReader(fr);
         String line;
-        List<CustomerLog> customerLogs = new ArrayList<>();
+        List<ErrorLog> errorLogs = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         while ((line = br.readLine()) != null) {
-            CustomerLog customerLog = mapper.readValue(line, CustomerLog.class);
-            customerLogs.add(customerLog);
+            ErrorLog errorLog = mapper.readValue(line, ErrorLog.class);
+            errorLogs.add(errorLog);
         }
-        ingest_data(customerLogs,null);
+        ingest_data(errorLogs,null);
         return HttpStatus.OK;
     }
 
     @Override
-    public HttpStatus ingest_data(List<CustomerLog> exf, String index) throws InterruptedException, IOException {
+    public HttpStatus ingest_data(List<ErrorLog> errorLogs, String index) throws InterruptedException, IOException {
         BulkProcessor bulkProcessor = bulk_Processor();
         try {
-            set_search(index, bulkProcessor, exf);
+            errorLogs.forEach(emp -> {
+                Map map = objectMapper.convertValue(emp.getLog(), Map.class);
+                _search(index, bulkProcessor, map, emp.getId());
+            });
         } catch (Exception e) {
             log.error("Error encountered", e);
             throw e;
@@ -81,9 +84,15 @@ public class ElasticsearchService implements ElasticsearchRepository {
 
     @Override
     public HttpStatus save(List<Context> contexts, String index) throws InterruptedException, IOException {
+        return null;
+    }
+
+    @Override
+    public HttpStatus ingest_data(ErrorLog errorLog, String index) throws InterruptedException, IOException {
         BulkProcessor bulkProcessor = bulk_Processor();
         try {
-            this.get_search(index, bulkProcessor, contexts);
+            Map map = objectMapper.convertValue(errorLog.getLog(), Map.class);
+            _search(index, bulkProcessor, map, errorLog.getId());
         } catch (Exception e) {
             log.error("Error encountered", e);
             throw e;
@@ -91,8 +100,7 @@ public class ElasticsearchService implements ElasticsearchRepository {
         return getHttpStatus(bulkProcessor);
     }
 
-    private void get_search(String index, BulkProcessor bulkProcessor, CustomerLog emp) {
-        Map<String, Object> map = objectMapper.convertValue(emp.getLog(), HashMap.class);
+    private void _search(String index, BulkProcessor bulkProcessor, Map<String, Object> map, String id) {
         map.values().removeAll(Collections.singleton(null));
         Set<String> keys1 = map.keySet();
         XContentBuilder builder = null;
@@ -115,98 +123,13 @@ public class ElasticsearchService implements ElasticsearchRepository {
         }
         String s = index != null ? index : "default";
         String index_search = String.format("%s", s.toLowerCase());
-        IndexRequest indexRequest = new IndexRequest(index_search, "_doc", emp.getId().toString())
+        IndexRequest indexRequest = new IndexRequest(index_search, "_doc", id)
                 .source(builder)
                 .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
-        UpdateRequest updateRequest = new UpdateRequest(index_search, "_doc", emp.getId().toString());
+        UpdateRequest updateRequest = new UpdateRequest(index_search, "_doc", id);
         updateRequest.doc(builder);
         updateRequest.upsert(indexRequest);
-
         bulkProcessor.add(updateRequest);
-    }
-
-    private void set_search(String index, BulkProcessor bulkProcessor, List<CustomerLog> customerLogs) {
-        customerLogs.forEach(emp -> {
-            Map<String, Object> map = objectMapper.convertValue(emp.getLog(), HashMap.class);
-            map.values().removeAll(Collections.singleton(null));
-            Set<String> keys1 = map.keySet();
-            XContentBuilder builder = null;
-            try {
-                builder = jsonBuilder().startObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-                ;
-            }
-            for (String keys : keys1) {
-                try {
-                    builder.field(keys, map.get(keys));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                builder.endObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String s = index != null ? index : "default";
-            String index_search = String.format("%s", s.toLowerCase());
-            IndexRequest indexRequest = new IndexRequest(index_search, "_doc", emp.getId().toString())
-                    .source(builder)
-                    .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
-            UpdateRequest updateRequest = new UpdateRequest(index_search, "_doc", emp.getId().toString());
-            updateRequest.doc(builder);
-            updateRequest.upsert(indexRequest);
-            bulkProcessor.add(updateRequest);
-        });
-    }
-
-    private void get_search(String index, BulkProcessor bulkProcessor, List<Context> contexts) {
-        contexts.forEach(ctx -> {
-            Map<String, Object> map = objectMapper.convertValue(ctx, HashMap.class);
-            map.values().removeAll(Collections.singleton(null));
-            Set<String> keys1 = map.keySet();
-            XContentBuilder builder = null;
-            try {
-                builder = jsonBuilder().startObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-                ;
-            }
-            for (String keys : keys1) {
-                try {
-                    builder.field(keys, map.get(keys));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                builder.endObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String s = index != null ? index : "default";
-            String index_search = String.format("%s", s.toLowerCase());
-            IndexRequest indexRequest = new IndexRequest(index_search, "_doc", ctx.getId().toString())
-                    .source(builder)
-                    .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
-            UpdateRequest updateRequest = new UpdateRequest(index_search, "_doc", ctx.getId().toString());
-            updateRequest.doc(builder);
-            updateRequest.upsert(indexRequest);
-            bulkProcessor.add(updateRequest);
-        });
-    }
-
-    @Override
-    public HttpStatus ingest_data(CustomerLog obj, String index) throws InterruptedException, IOException {
-        BulkProcessor bulkProcessor = bulk_Processor();
-        try {
-            get_search(index, bulkProcessor, obj);
-        } catch (Exception e) {
-            log.error("Error encountered", e);
-            throw e;
-        }
-        return getHttpStatus(bulkProcessor);
     }
 
     private HttpStatus getHttpStatus(BulkProcessor bulkProcessor) throws InterruptedException {
@@ -218,7 +141,6 @@ public class ElasticsearchService implements ElasticsearchRepository {
             log.error("Error", e);
             throw e;
         }
-
         return HttpStatus.OK;
     }
 
@@ -253,9 +175,8 @@ public class ElasticsearchService implements ElasticsearchRepository {
     }
 
     @Override
-    public List<CustomerLog> get_all_data() throws IOException {
+    public List<ErrorLog> get_all_data() throws IOException {
         return getCustomers(elasticsearch_index);
-
     }
 
     @Override
@@ -263,17 +184,19 @@ public class ElasticsearchService implements ElasticsearchRepository {
         return getContexts(index);
     }
 
-    private List<CustomerLog> getCustomers(String index) throws IOException {
+    private List<ErrorLog> getCustomers(String index) throws IOException {
         SearchResponse searchResponse = searchResponse(index);
         SearchHit[] searchHit = searchResponse.getHits().getHits();
-        List<CustomerLog> customerLogs = new ArrayList<>();
+        List<ErrorLog> errorLogs = new ArrayList<>();
         for (SearchHit hit : searchHit) {
             Map map = hit.getSourceAsMap();
-            CustomerLog customerLog = objectMapper.convertValue(hit.getSourceAsMap(), CustomerLog.class);
-            customerLog.setLog(map);
-            customerLogs.add(customerLog);
+            ErrorLog customer = new ErrorLog();
+            //CustomerLog customerLog = objectMapper.convertValue(hit.getSourceAsMap(), CustomerLog.class);
+            customer.setLog(map);
+            customer.setId(hit.getId());
+            errorLogs.add(customer);
         }
-        return customerLogs;
+        return errorLogs;
     }
 
     private SearchResponse searchResponse(String index) throws IOException {
