@@ -1,8 +1,8 @@
-package com.opengeode.dev.glb_search.service.impl;
+package com.opengeode.dev.glb_search.service.imp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opengeode.dev.glb_jms.model.ErrorLog;
 import com.opengeode.dev.glb_search.model.Context;
-import com.opengeode.dev.glb_search.model.ErrorLog;
 import com.opengeode.dev.glb_search.dao.ElasticsearchRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkItemResponse;
@@ -40,7 +40,7 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 @Service
 @Slf4j
-public class ElasticsearchService implements ElasticsearchRepository {
+public class ElasticsearchServiceImp implements ElasticsearchRepository {
 
     @Autowired
     private RestHighLevelClient restHighLevelClient;

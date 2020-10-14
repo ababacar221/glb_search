@@ -1,7 +1,7 @@
 package com.opengeode.dev.glb_search.dao;
 
 import com.opengeode.dev.glb_search.model.Context;
-import com.opengeode.dev.glb_search.model.ErrorLog;
+import com.opengeode.dev.glb_jms.model.ErrorLog;
 import org.springframework.http.HttpStatus;
 
 import java.io.File;

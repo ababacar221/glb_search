@@ -1,4 +1,4 @@
-package com.opengeode.dev.glb_search.service.impl;
+package com.opengeode.dev.glb_search.service.imp;
 
 import com.opengeode.dev.glb_search.helper.excel.ExcelHelper;
 import com.opengeode.dev.glb_search.model.Context;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Component
-public class ExcelService implements ExcelRepository {
+public class ExcelServiceImp implements ExcelRepository {
 
     @Autowired
     private ElasticsearchRepository elasticsearchRepository;

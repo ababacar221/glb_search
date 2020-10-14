@@ -1,4 +1,4 @@
-package com.opengeode.dev.glb_search.model;
+package com.opengeode.dev.glb_jms.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

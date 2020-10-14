@@ -1,6 +1,6 @@
 package com.opengeode.dev.glb_search.helper.jms;
 
-import com.opengeode.dev.glb_search.model.ErrorLog;
+import com.opengeode.dev.glb_jms.model.ErrorLog;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.Message;
 import org.apache.activemq.command.ActiveMQQueue;

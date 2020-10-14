@@ -1,8 +1,7 @@
 package com.opengeode.dev.glb_search.controller;
-import com.opengeode.dev.glb_search.model.ErrorLog;
+import com.opengeode.dev.glb_jms.model.ErrorLog;
 import com.opengeode.dev.glb_search.dao.ElasticsearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
